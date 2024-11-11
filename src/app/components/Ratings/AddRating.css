@@ -1,0 +1,19 @@
+.rating {
+    display: flex;
+    direction: row;
+  }
+  
+  .star {
+    cursor: pointer;
+    font-size: 24px;
+    color: #ccc; /* Default color for unfilled stars */
+  }
+  
+  .star.filled {
+    color: #f39c12; /* Color for filled stars */
+  }
+  
+  .star:hover {
+    color: #f39c12;
+  }
+  
