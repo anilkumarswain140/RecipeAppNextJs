@@ -1,10 +1,8 @@
-import React from 'react';
-import './Pagination.css';
+import React from "react";
+import "./Pagination.css";
 const Pagination = ({ totalPages, currentPage, onPageChange }) => {
   const handlePageChange = (page) => {
-    console.log(currentPage);
-    
-    onPageChange(page); 
+    onPageChange(page);
   };
 
   return (
@@ -15,11 +13,11 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
       >
         Previous
       </button>
-      {Array.from({ length: totalPages }, (_, index) => (
+      {Array.from({ length: totalPages }, (item, index) => (
         <button
           key={index + 1}
           onClick={() => handlePageChange(index + 1)}
-          className={currentPage === index + 1 ? 'active' : ''}
+          className={currentPage === index + 1 ? "active" : ""}
         >
           {index + 1}
         </button>

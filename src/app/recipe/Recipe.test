@@ -1,0 +1,187 @@
+// import React from 'react';
+// import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+// import { Provider } from 'react-redux';
+// import RecipeGrid from './page'; // Adjust the path as necessary
+// import { configureStore } from '@reduxjs/toolkit';
+// import { ToastProvider } from '../contexts/ToastContext';
+
+// jest.mock('../store/slices/recipeSlice', () => ({
+//   fetchRecipes: jest.fn(),
+//   addRecipe: jest.fn(),
+// }));
+
+// const mockRecipeState = {
+//   recipes: {
+//     recipes: [],
+//     loading: false,
+//     error: null,
+//   },
+// };
+
+// const mockReducer = (state = mockRecipeState.recipes, action) => {
+//   switch (action.type) {
+//     case 'recipes/fetchRecipes/pending':
+//       return { ...state, loading: true };
+//     case 'recipes/fetchRecipes/fulfilled':
+//       return { ...state, loading: false, recipes: action.payload.recipes };
+//     case 'recipes/fetchRecipes/rejected':
+//       return { ...state, loading: false, error: action.error.message };
+//     case 'recipes/addRecipe/fulfilled':
+//       return { ...state, recipes: [...state.recipes, action.payload] };
+//     default:
+//       return state;
+//   }
+// };
+
+// const renderWithProviders = (ui, { preloadedState = mockRecipeState } = {}) => {
+//   const store = configureStore({
+//     reducer: {
+//       recipes: mockReducer,
+//     },
+//     preloadedState: {
+//       recipes: mockRecipeState.recipes,
+//       ...preloadedState,
+//     },
+//   });
+
+//   return render(ui, { wrapper: ({ children }) => <Provider store={store}>{children}</Provider> });
+// };
+
+// describe('RecipeGrid', () => {
+//   afterEach(() => {
+//     jest.clearAllMocks();
+//   });
+
+//   it('renders loading state correctly', async () => {
+//     // Mocking fetchRecipes action to return loading state
+//     require('../store/slices/recipeSlice').fetchRecipes.mockReturnValue({ type: 'recipes/fetchRecipes/pending' });
+//     renderWithProviders(<ToastProvider><RecipeGrid /></ToastProvider>);
+
+//     // Ensure loading text is displayed
+//     await waitFor(() => {
+//       expect(screen.getByText(/loading/i)).toBeInTheDocument();
+//     });
+//   });
+
+//   it('renders error state correctly', async () => {
+//     const errorMessage = 'Failed to fetch recipes';
+//     // Mocking fetchRecipes to reject with an error
+//     require('../store/slices/recipeSlice').fetchRecipes.mockRejectedValue({ error: errorMessage });
+//     renderWithProviders(<ToastProvider><RecipeGrid /></ToastProvider>);
+
+//     // Wait for error message to appear
+//     await waitFor(() => {
+//       expect(screen.getByText(errorMessage)).toBeInTheDocument();
+//     });
+//   });
+
+//   it('renders recipes correctly when data is loaded', async () => {
+//     const mockRecipes = [
+//       {
+//         _id: '1',
+//         title: 'Recipe 1',
+//         ingredients: ['Ingredient 1'],
+//         image: '/path/to/image1.jpg',
+//         averageRating: 4.5,
+//         preparationTime: 30,
+//         author: { username: 'Author1' },
+//       },
+//       {
+//         _id: '2',
+//         title: 'Recipe 2',
+//         ingredients: ['Ingredient 2'],
+//         image: '/path/to/image2.jpg',
+//         averageRating: 4.0,
+//         preparationTime: 20,
+//         author: { username: 'Author2' },
+//       },
+//     ];
+
+//     // Mocking the resolved value for fetchRecipes action
+//     require('../store/slices/recipeSlice').fetchRecipes.mockResolvedValue({
+//       payload: { recipes: mockRecipes, totalPages: 1, currentPage: 1 },
+//     });
+
+//     renderWithProviders(<ToastProvider><RecipeGrid /></ToastProvider>);
+
+//     // Wait for recipes to load and assert they are displayed
+//     await waitFor(() => {
+//       mockRecipes.forEach((recipe) => {
+//         expect(screen.getByText(recipe.title)).toBeInTheDocument();
+//         expect(screen.getByText(`By ${recipe.author.username}`)).toBeInTheDocument();
+//         expect(screen.getByText(recipe.preparationTime.toString())).toBeInTheDocument();
+//       });
+//     });
+//   });
+
+//   it('handles adding a recipe', async () => {
+//     const newRecipe = {
+//       title: 'New Recipe',
+//       ingredients: ['New Ingredient'],
+//       image: '/path/to/new-image.jpg',
+//       averageRating: 5.0,
+//       preparationTime: 15,
+//       author: { username: 'NewAuthor' },
+//     };
+
+//     // Mocking the addRecipe action to return the new recipe
+//     require('../store/slices/recipeSlice').addRecipe.mockResolvedValue({ payload: newRecipe });
+//     require('../store/slices/recipeSlice').fetchRecipes.mockResolvedValue({
+//       payload: { recipes: [newRecipe], totalPages: 1, currentPage: 1 },
+//     });
+
+//     renderWithProviders(<ToastProvider><RecipeGrid /></ToastProvider>);
+
+//     // Simulate clicking the "Add Recipe" button
+//     fireEvent.click(screen.getByText(/add recipe/i));
+
+//     // Wait for addRecipe action to be called
+//     await waitFor(() => {
+//       expect(require('../store/slices/recipeSlice').addRecipe).toHaveBeenCalledWith(newRecipe);
+//     });
+
+//     // Wait for new recipe to be displayed
+//     await waitFor(() => {
+//       expect(screen.getByText(newRecipe.title)).toBeInTheDocument();
+//     });
+//   });
+
+//   it('handles filter changes', async () => {
+//     const mockFilter = { rating: '4', preparationTime: '30' };
+    
+//     // Mocking fetchRecipes with no filters to simulate response
+//     require('../store/slices/recipeSlice').fetchRecipes.mockResolvedValue({
+//       payload: { recipes: [], totalPages: 0, currentPage: 1 },
+//     });
+
+//     renderWithProviders(<ToastProvider><RecipeGrid /></ToastProvider>);
+
+//     // Ensure you're targeting the correct filter element
+//     const filterInput = screen.getByPlaceholderText(/filter rating/i); // Adjust the placeholder if needed
+//     fireEvent.change(filterInput, { target: { value: mockFilter.rating } });
+
+//     // Wait for fetchRecipes to be called with the correct filter
+//     await waitFor(() => {
+//       expect(require('../store/slices/recipeSlice').fetchRecipes).toHaveBeenCalledWith(mockFilter);
+//     });
+//   });
+
+//   it('handles pagination', async () => {
+//     const mockPage = 2;
+//     require('../store/slices/recipeSlice').fetchRecipes.mockResolvedValue({
+//       payload: { recipes: [], totalPages: 3, currentPage: mockPage },
+//     });
+
+//     renderWithProviders(<ToastProvider><RecipeGrid /></ToastProvider>);
+
+//     // Wait for pagination to be rendered and simulate button click
+//     await waitFor(() => {
+//       fireEvent.click(screen.getByText(mockPage.toString()));
+//     });
+
+//     // Wait for fetchRecipes to be called with the correct page and limit
+//     await waitFor(() => {
+//       expect(require('../store/slices/recipeSlice').fetchRecipes).toHaveBeenCalledWith({ page: mockPage, limit: 10 });
+//     });
+//   });
+// });

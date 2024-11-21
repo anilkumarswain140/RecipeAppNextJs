@@ -1,11 +1,13 @@
-"use client"
+"use client";
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./provider";
 import Header from "./components/Header/Header";
-import { usePathname } from 'next/navigation'
+import { usePathname } from "next/navigation";
 import Footer from "./components/Footer/Footer";
-import { ToastProvider } from './contexts/ToastContext';
+import { ToastProvider } from "./contexts/ToastContext";
+import { LoadingProvider } from "./contexts/LoadingContext";
+import Loader from "./components/Loading/Loader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,16 +20,14 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const location = usePathname();
-  console.log(location)
-  const hideHeaderFooter = location === '/signup' || location === '/login';
+  console.log(location);
+  const hideHeaderFooter = location === "/signup" || location === "/login";
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
@@ -37,9 +37,10 @@ export default function RootLayout({
           <div className="main-container">
             {!hideHeaderFooter && <Header />}
             <div className="content">
-              <ToastProvider>
-                {children}
-              </ToastProvider>
+              <LoadingProvider>
+                <Loader />
+                <ToastProvider>{children}</ToastProvider>
+              </LoadingProvider>
             </div>
             {!hideHeaderFooter && <Footer />}
           </div>

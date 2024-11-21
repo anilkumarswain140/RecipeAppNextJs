@@ -4,6 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
+    "types": ["jest","@testing-library/react"],
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -23,6 +24,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/recipedetails/[id]"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/recipedetails/[id]", "src/app/components/Pagination/Pagination.test.js", "src/app/components/Filter/Filter.test.js", "src/app/components/Signup/SignUpForm.test.js", "src/app/components/Ratings/AddRating.test.js"],
   "exclude": ["node_modules"]
 }

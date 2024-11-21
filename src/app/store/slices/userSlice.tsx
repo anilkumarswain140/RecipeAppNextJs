@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState: {
     user: null,
     loading: false,
@@ -9,7 +9,7 @@ const userSlice = createSlice({
   },
   reducers: {
     logout: (state) => {
-      state.user = null; 
+      state.user = null;
       state.error = null;
     },
   },
