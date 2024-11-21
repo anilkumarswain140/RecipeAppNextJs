@@ -1,5 +1,5 @@
 import Link from "next/link";
-import StarRating from "../components/ratings/StartRating";
+import StarRating from "../components/Ratings/StartRating";
 
 const RecipeCard = ({
   id,
