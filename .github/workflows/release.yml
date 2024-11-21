@@ -27,7 +27,7 @@ jobs:
 
       # Add this step to run tests
       - name: Run Tests
-        run: npm test  # Assuming `npm test` is configured to run your tests (e.g., Jest)
+        run: npm run test  # Assuming `npm test` is configured to run your tests (e.g., Jest)
 
       # Optionally, you can add more detailed testing commands or frameworks
       # Example for Jest:
