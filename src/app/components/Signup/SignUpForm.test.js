@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import SignUpForm from "./SignupForm.tsx"; // Adjust path as needed
+import SignUpForm from "./SignupForm"; // Adjust path as needed
 import { useSignUp } from "../../hooks/useSignUp"; // Mock this hook
 
 // Mock the useSignUp hook
@@ -76,7 +76,16 @@ describe("SignUpForm Component", () => {
 
     render(<SignUpForm />);
 
-    expect(screen.getByText(/Something went wrong!/)).toBeInTheDocument();
+    // Use `getAllByText` to get all matching elements
+    const errorMessages = screen.getAllByText(/Something went wrong!/);
+
+    // Ensure the array has elements
+    expect(errorMessages).toHaveLength(3);
+
+    // Optionally, ensure each element is in the document
+    errorMessages.forEach((errorMessage) => {
+      expect(errorMessage).toBeInTheDocument();
+    });
   });
 
   test("disables the signup button when loading is true", () => {
