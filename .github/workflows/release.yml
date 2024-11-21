@@ -23,10 +23,10 @@ jobs:
           node-version: '20.8.1'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       - name: Install Jest
-        run: npm install --save-dev jest --legacy-peer-deps
+        run: npm install --save-dev jest
 
       # Add this step to run tests
       - name: Run Tests
@@ -42,6 +42,9 @@ jobs:
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
