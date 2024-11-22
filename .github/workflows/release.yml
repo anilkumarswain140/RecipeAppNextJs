@@ -7,44 +7,55 @@ env:
 on:
   push:
     branches:
-      - main  # Only trigger deployment on pushes to the main branch
+      - main  # Trigger deployment and semantic release on pushes to the main branch
 
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '20.8.1'
+          cache: 'npm'
 
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      - name: Install Jest
-        run: npm install --save-dev jest
-
-      # Add this step to run tests
+      # Step 4: Run tests
       - name: Run Tests
-        run: npm run test  # Assuming `npm test` is configured to run your tests (e.g., Jest)
+        run: npm run test  # Make sure `npm test` is configured to run tests
 
-      # Optionally, you can add more detailed testing commands or frameworks
-      # Example for Jest:
-      # - name: Run Jest Tests
-      #   run: npx jest --ci --coverage
+      # Step 5: Install Semantic Release
+      - name: Install Semantic Release
+        run: npm install semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github --save-dev
 
+      # Step 6: Run Semantic Release
+      - name: Run Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: npx semantic-release
+
+      # Step 7: Install Vercel CLI
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      # Step 8: Pull Vercel environment information
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
+      # Step 9: Build project artifacts
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
+      # Step 10: Deploy project artifacts to Vercel
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
