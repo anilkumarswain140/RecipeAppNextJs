@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/anilkumarswain140/RecipeAppNextJs/compare/v1.0.1...v1.0.2) (2024-11-22)
+
+
+### Bug Fixes
+
+* Add fixes for Loader ([aa15fc2](https://github.com/anilkumarswain140/RecipeAppNextJs/commit/aa15fc27d9b1568493f5ca0c8909355a5c8ec4f7))
+
 ## [1.0.1](https://github.com/anilkumarswain140/RecipeAppNextJs/compare/v1.0.0...v1.0.1) (2024-11-22)
 
 
