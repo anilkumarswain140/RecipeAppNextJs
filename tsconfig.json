@@ -1,10 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
-    "types": ["jest","@testing-library/react","@testing-library/jest-dom"],
+    "types": [
+      "jest",
+      "@testing-library/react",
+      "@testing-library/jest-dom"
+    ],
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -13,7 +21,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noImplicitAny": false,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
     "plugins": [
       {
@@ -21,9 +29,24 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/recipedetails/[id]", "src/app/components/Pagination/Pagination.test.tsx", "src/app/components/Filter/Filter.test.tsx", "src/app/components/Signup/SignUpForm.test.tsx", "src/app/components/Ratings/AddRating.test.tsx", "src/app/login/Login.test.js"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/recipedetails/[id]",
+    "src/app/components/Pagination/Pagination.test.tsx",
+    "src/app/components/Filter/Filter.test.tsx",
+    "src/app/components/Signup/SignUpForm.test.tsx",
+    "src/app/components/Ratings/AddRating.test.tsx",
+    "src/app/login/Login.test.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

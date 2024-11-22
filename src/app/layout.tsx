@@ -38,7 +38,6 @@ export default function RootLayout({
             {!hideHeaderFooter && <Header />}
             <div className="content">
               <LoadingProvider>
-                <Loader />
                 <ToastProvider>{children}</ToastProvider>
               </LoadingProvider>
             </div>
