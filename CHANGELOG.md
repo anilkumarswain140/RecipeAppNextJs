@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/anilkumarswain140/RecipeAppNextJs/compare/v1.0.0...v1.0.1) (2024-11-22)
+
+
+### Bug Fixes
+
+* Add fixes for test cases and fixes for spinner or loader ([2f1dca5](https://github.com/anilkumarswain140/RecipeAppNextJs/commit/2f1dca57467cada9a6bfecf4ce951e59c8f57cd3))
+
 # 1.0.0 (2024-11-22)
 
 
