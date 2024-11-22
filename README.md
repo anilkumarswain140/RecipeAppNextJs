@@ -248,7 +248,7 @@ jobs:
 ---
 
 ### App is live on this URL
-### https://foods-app-next-jtkz8g5f9-anils-projects-9cea7459.vercel.app/
+### https://foods-app-next-js.vercel.app/
 ---
 
 For further information, refer to the [React Documentation](https://reactjs.org/).
