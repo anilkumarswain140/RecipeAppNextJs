@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import useLogin from "../hooks/useLogin";
+import Loader from "../components/Loading/Loader";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateField = (name, value) => {
     let error = "";
@@ -50,9 +52,9 @@ const Login = () => {
 
   const { handleUserLogin, loading, error } = useLogin();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     // Perform a final validation check on form submission
     const newErrors = { email: "", password: "" };
     Object.keys(formData).forEach((key) => {
@@ -63,7 +65,8 @@ const Login = () => {
 
     // Proceed with login if no validation errors
     if (newErrors.email == "" && newErrors.password == "") {
-      handleUserLogin(formData);
+      await handleUserLogin(formData);
+      setIsLoading(false);
     }
   };
 
@@ -72,6 +75,8 @@ const Login = () => {
       className="flex md:w-1/1 justify-center py-10 pt-12 items-center bg-white"
       lang="en"
     >
+      {isLoading && <Loader loading={isLoading} />}
+
       <form
         className="bg-white p-6 w-full max-w-md mx-auto rounded-md shadow-md"
         aria-labelledby="login-form"

@@ -13,7 +13,7 @@ export const useSignUp = () => {
     try {
       const response = await api.signUp(formData);
 
-      if (response && response.status === 200) {
+      if (response && response?.user) {
         showToast("Registration successful", "success");
         setLoading(false);
         navigate.push("/login"); // Navigate to login after successful registration

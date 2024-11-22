@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Loader from "../Loading/Loader";
 
 const RecipeFormModal = ({ isOpen, closeModal, addRecipe }) => {
   const [prepTimeError, setPrepTimeError] = useState("");
@@ -18,6 +19,7 @@ const RecipeFormModal = ({ isOpen, closeModal, addRecipe }) => {
   });
 
   const user = useSelector((state: any) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Reset the form when the user changes
@@ -63,9 +65,9 @@ const RecipeFormModal = ({ isOpen, closeModal, addRecipe }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     // Validate fields before submitting
     if (!recipe.title) {
       setTitleError("Title is required.");
@@ -101,7 +103,7 @@ const RecipeFormModal = ({ isOpen, closeModal, addRecipe }) => {
       };
 
       // Call addRecipe API function
-      addRecipe(newRecipe);
+      await addRecipe(newRecipe);
 
       // Clear the recipe form fields after submission
       setRecipe({
@@ -114,6 +116,7 @@ const RecipeFormModal = ({ isOpen, closeModal, addRecipe }) => {
       });
 
       closeModal(); // Close the modal after adding the recipe
+      setIsLoading(false);
     }
   };
 
@@ -150,156 +153,160 @@ const RecipeFormModal = ({ isOpen, closeModal, addRecipe }) => {
   };
 
   return (
-    <div
-      data-testid="RecipeModal"
-      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? "block" : "hidden"}`}
-    >
-      <div className="bg-white rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
-        {isOpen ? (
-          <h2 className="text-xl font-bold mb-4">Add New Recipe</h2>
-        ) : (
-          <p>Modal is closed</p>
-        )}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700" htmlFor="title">
-              Title
-            </label>
-            <input
-              id="title"
-              type="text"
-              name="title"
-              value={recipe.title}
-              onChange={handleInputChange}
-              className="w-full border rounded px-4 py-2"
-              required
-            />
-            {titleError && <p className="text-red-500">{titleError}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700" htmlFor="ingredients">
-              Ingredients
-            </label>
+    <>
+      {isLoading && <Loader loading={isLoading} />}
+
+      <div
+        data-testid="RecipeModal"
+        className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? "block" : "hidden"}`}
+      >
+        <div className="bg-white rounded-lg p-8 max-w-lg w-full max-h-screen overflow-y-auto">
+          {isOpen ? (
+            <h2 className="text-xl font-bold mb-4">Add New Recipe</h2>
+          ) : (
+            <p>Modal is closed</p>
+          )}
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              {recipe.ingredients.map((ingredient, index) => (
+              <label className="block text-gray-700" htmlFor="title">
+                Title
+              </label>
+              <input
+                id="title"
+                type="text"
+                name="title"
+                value={recipe.title}
+                onChange={handleInputChange}
+                className="w-full border rounded px-4 py-2"
+                required
+              />
+              {titleError && <p className="text-red-500">{titleError}</p>}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700" htmlFor="ingredients">
+                Ingredients
+              </label>
+              <div className="mb-4">
+                {recipe.ingredients.map((ingredient, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <label htmlFor={`ingredient-${index}`} className="sr-only">
+                      Ingredient {index + 1}
+                    </label>
+                    <textarea
+                      id={`ingredient-${index}`} // Unique ID for each textarea
+                      name="ingredients"
+                      value={ingredient}
+                      onChange={(e) =>
+                        handleIngredientChange(index, e.target.value)
+                      }
+                      className="w-full border rounded px-4 py-2 h-16 resize-y overflow-auto"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeIngredient(index)}
+                      className="ml-2 text-red-500"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button
+                  data-testid="add-ingredient-button"
+                  type="button"
+                  onClick={addIngredient}
+                  className="text-blue-500"
+                >
+                  Add Ingredient
+                </button>
+              </div>
+              {ingredientsError && (
+                <p className="text-red-500">{ingredientsError}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700" htmlFor="image">
+                Image URL
+              </label>
+              <input
+                id="image"
+                type="text"
+                name="image"
+                value={recipe.image}
+                onChange={handleInputChange}
+                className="w-full border rounded px-4 py-2"
+                required
+              />
+              {imageError && <p className="text-red-500">{imageError}</p>}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700" htmlFor="steps">
+                Steps
+              </label>
+              {recipe.steps.map((step, index) => (
                 <div key={index} className="flex items-center mb-2">
-                  <label htmlFor={`ingredient-${index}`} className="sr-only">
-                    Ingredient {index + 1}
-                  </label>
+                  <label htmlFor={`step-${index}`} className="sr-only">
+                    Step {index + 1}
+                  </label>{" "}
+                  {/* Add this label */}
                   <textarea
-                    id={`ingredient-${index}`} // Unique ID for each textarea
-                    name="ingredients"
-                    value={ingredient}
-                    onChange={(e) =>
-                      handleIngredientChange(index, e.target.value)
-                    }
+                    id={`step-${index}`} // Change this to a unique id
+                    name="steps"
+                    value={step}
+                    onChange={(e) => handleStepChange(index, e.target.value)}
                     className="w-full border rounded px-4 py-2 h-16 resize-y overflow-auto"
                     required
                   />
                   <button
                     type="button"
-                    onClick={() => removeIngredient(index)}
+                    onClick={() => removeStep(index)}
                     className="ml-2 text-red-500"
                   >
                     Remove
                   </button>
                 </div>
               ))}
+              <button type="button" onClick={addStep} className="text-blue-500">
+                Add Step
+              </button>
+              {stepsError && <p className="text-red-500">{stepsError}</p>}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700" htmlFor="preparationTime">
+                Preparation Time
+              </label>
+              <input
+                id="preparationTime"
+                type="text"
+                name="preparationTime"
+                value={recipe.preparationTime}
+                onChange={handleInputChange}
+                className="w-full border rounded px-4 py-2"
+                required
+              />
+              {prepTimeError && <p className="text-red-500">{prepTimeError}</p>}
+            </div>
+            <div className="flex justify-end">
               <button
-                data-testid="add-ingredient-button"
                 type="button"
-                onClick={addIngredient}
-                className="text-blue-500"
+                onClick={closeModal}
+                className="px-4 py-2 bg-gray-400 text-white rounded-md"
               >
-                Add Ingredient
+                Close
+              </button>
+              <button
+                data-testid="add-recipe"
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md ml-2"
+              >
+                Add Recipe
               </button>
             </div>
-            {ingredientsError && (
-              <p className="text-red-500">{ingredientsError}</p>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700" htmlFor="image">
-              Image URL
-            </label>
-            <input
-              id="image"
-              type="text"
-              name="image"
-              value={recipe.image}
-              onChange={handleInputChange}
-              className="w-full border rounded px-4 py-2"
-              required
-            />
-            {imageError && <p className="text-red-500">{imageError}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700" htmlFor="steps">
-              Steps
-            </label>
-            {recipe.steps.map((step, index) => (
-              <div key={index} className="flex items-center mb-2">
-                <label htmlFor={`step-${index}`} className="sr-only">
-                  Step {index + 1}
-                </label>{" "}
-                {/* Add this label */}
-                <textarea
-                  id={`step-${index}`} // Change this to a unique id
-                  name="steps"
-                  value={step}
-                  onChange={(e) => handleStepChange(index, e.target.value)}
-                  className="w-full border rounded px-4 py-2 h-16 resize-y overflow-auto"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => removeStep(index)}
-                  className="ml-2 text-red-500"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-            <button type="button" onClick={addStep} className="text-blue-500">
-              Add Step
-            </button>
-            {stepsError && <p className="text-red-500">{stepsError}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700" htmlFor="preparationTime">
-              Preparation Time
-            </label>
-            <input
-              id="preparationTime"
-              type="text"
-              name="preparationTime"
-              value={recipe.preparationTime}
-              onChange={handleInputChange}
-              className="w-full border rounded px-4 py-2"
-              required
-            />
-            {prepTimeError && <p className="text-red-500">{prepTimeError}</p>}
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={closeModal}
-              className="px-4 py-2 bg-gray-400 text-white rounded-md"
-            >
-              Close
-            </button>
-            <button
-              data-testid="add-recipe"
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-md ml-2"
-            >
-              Add Recipe
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

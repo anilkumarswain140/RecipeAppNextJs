@@ -8,6 +8,7 @@ import Pagination from "../components/Pagination/Pagination";
 import AddRecipeButton from "../components/AddRecipe/addRecipeButton";
 import { ToastProvider, useToast } from "../contexts/ToastContext";
 import dynamic from "next/dynamic";
+import Loader from "../components/Loading/Loader";
 const RecipeCard = dynamic(() => import("./Recipe"));
 interface Filter {
   rating: string;
@@ -26,6 +27,8 @@ interface Recipe {
 
 const RecipeGrid = () => {
   const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+
   const { recipes, loading, error, totalPages, currentPage } = useAppSelector(
     (state) => state.recipes,
   );
@@ -50,10 +53,13 @@ const RecipeGrid = () => {
 
   const handleAddRecipe = async (newRecipe: Recipe) => {
     try {
+      setIsLoading(true);
       await dispatch(addRecipe(newRecipe)).unwrap();
       dispatch(fetchRecipes({ page: currentPage, limit: 10 }));
       showToast("Recipe added successfully", "success");
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
       showToast("Something went wrong, please try again.", "error");
     }
@@ -73,6 +79,7 @@ const RecipeGrid = () => {
 
   return (
     <div className="relative">
+      {isLoading && <Loader loading={isLoading} />}
       <RecipeFilter onFilterChange={handleFilterChange} />
 
       <div role="region" aria-labelledby="recipe-grid">

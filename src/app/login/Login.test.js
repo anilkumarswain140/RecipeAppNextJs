@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Login from "./page"; // Correct component name
 import useLogin from "../hooks/useLogin";
 
@@ -21,7 +21,7 @@ describe("Login Component", () => {
   });
 
   it("renders the form correctly", () => {
-    render(<Login />); // Correct component
+    render(<Login />);
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
@@ -30,13 +30,21 @@ describe("Login Component", () => {
   it("displays validation error when email is missing", async () => {
     render(<Login />);
     fireEvent.click(screen.getByRole("button", { name: /login/i }));
-    expect(await screen.findByText("Email is required")).toBeInTheDocument();
+
+    // Wait for validation error for email
+    await waitFor(() =>
+      expect(screen.getByText("Email is required")).toBeInTheDocument(),
+    );
   });
 
   it("displays validation error when password is missing", async () => {
     render(<Login />);
     fireEvent.click(screen.getByRole("button", { name: /login/i }));
-    expect(await screen.findByText("Password is required")).toBeInTheDocument();
+
+    // Wait for validation error for password
+    await waitFor(() =>
+      expect(screen.getByText("Password is required")).toBeInTheDocument(),
+    );
   });
 
   it("calls handleUserLogin on valid form submission", async () => {
@@ -51,13 +59,16 @@ describe("Login Component", () => {
     });
 
     // Submit the form
-    fireEvent.click(screen.getByTestId("login"));
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
 
-    // Assert that the mock function was called with correct arguments
-    expect(handleUserLoginMock).toHaveBeenCalledWith({
-      email: "test@example.com",
-      password: "password123",
-    });
+    // Wait for the mock function to be called
+    await waitFor(() =>
+      expect(handleUserLoginMock).toHaveBeenCalledWith({
+        email: "test@example.com",
+        password: "password123",
+      }),
+    );
+
     expect(handleUserLoginMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -5,16 +5,22 @@ import { rateRecipe } from "../../api/apiService";
 import Rating from "@/app/components/Ratings/AddRating";
 import Comments from "@/app/components/Comments/comment";
 import { useToast } from "../../contexts/ToastContext";
+import { useState } from "react";
+import Loader from "@/app/components/Loading/Loader";
 
 const RecipeDetailsClient = ({ recipe }) => {
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRatingChange = async (newRating) => {
     try {
+      setIsLoading(true);
       const response = await rateRecipe(recipe._id, newRating);
       showToast("Form submitted successfully!", "success");
+      setIsLoading(false);
       return response;
     } catch (error) {
+      setIsLoading(false);
       console.error("Error submitting rating:", error);
       showToast("Error submitting rating:", "error");
     }
@@ -22,6 +28,7 @@ const RecipeDetailsClient = ({ recipe }) => {
 
   return (
     <div className="recipe-details-container">
+      {isLoading && <Loader loading={isLoading} />}
       {/* Recipe Image */}
       <div className="recipe-header" role="banner">
         <img

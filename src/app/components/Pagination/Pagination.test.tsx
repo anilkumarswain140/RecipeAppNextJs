@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import Pagination from "./Pagination.tsx";
+import Pagination from "./Pagination";
 
 describe("Pagination Component", () => {
   const totalPages = 5; // Total pages for testing

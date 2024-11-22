@@ -11,6 +11,7 @@ import { deleteCookie } from "../../../../utils/cookieUtils";
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useRouter();
   const dispatch = useDispatch();
 
@@ -19,11 +20,12 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    console.log("User logged out");
+    setIsLoading(true);
     deleteCookie("authToken");
     setDropdownOpen(false);
     dispatch(logout());
     navigate.push("/");
+    setIsLoading(false);
   };
 
   // Debounced function for searching recipes

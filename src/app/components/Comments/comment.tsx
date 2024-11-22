@@ -4,17 +4,21 @@ import { addComment } from "../../api/apiService"; // Assuming this function is 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@/app/contexts/ToastContext";
+import Loader from "../Loading/Loader";
 
 const Comments = ({ recipeId, initialComments }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState(initialComments);
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
   };
 
   const handleCommentSubmit = async () => {
+    setIsLoading(true);
+
     if (comment.trim() === "") {
       alert("Comment cannot be empty");
       return;
@@ -24,8 +28,10 @@ const Comments = ({ recipeId, initialComments }) => {
       const newComment = await addComment(recipeId, comment);
       setComments([...comments, newComment]);
       setComment("");
+      setIsLoading(false);
       window.location.reload();
     } catch (error) {
+      setIsLoading(false);
       console.error("Error submitting comment:", error);
       showToast("Error submitting comment:", "error");
     }
@@ -33,6 +39,7 @@ const Comments = ({ recipeId, initialComments }) => {
 
   return (
     <div className="comments-section">
+      {isLoading && <Loader loading={isLoading} />}
       <h3>Comments</h3>
       {comments.length > 0 ? (
         comments.map((comment, index) => (
