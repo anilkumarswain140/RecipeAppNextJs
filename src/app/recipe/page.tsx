@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { addRecipe, fetchRecipes } from "../store/slices/recipeSlice";
 import RecipeFilter from "../components/Filter/Filter";
@@ -9,7 +9,9 @@ import AddRecipeButton from "../components/AddRecipe/addRecipeButton";
 import { ToastProvider, useToast } from "../contexts/ToastContext";
 import dynamic from "next/dynamic";
 import Loader from "../components/Loading/Loader";
+
 const RecipeCard = dynamic(() => import("./Recipe"));
+
 interface Filter {
   rating: string;
   preparationTime: string;
@@ -39,18 +41,14 @@ const RecipeGrid = () => {
     preparationTime: "",
   });
 
-  useEffect(() => {
-    const debounceTimeout = setTimeout(() => {
-      if (filter.rating || filter.preparationTime) {
-        dispatch(fetchRecipes(filter));
-      } else {
-        dispatch(fetchRecipes({ page: currentPage, limit: 10 }));
-      }
-    }, 500);
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    return () => clearTimeout(debounceTimeout);
-  }, [dispatch, filter, currentPage]);
+  // Handle Filter Change
+  const handleFilterChange = (newFilter: Filter) => {
+    setFilter(newFilter);
+  };
 
+  // Handle Add Recipe
   const handleAddRecipe = async (newRecipe: Recipe) => {
     try {
       setIsLoading(true);
@@ -65,13 +63,34 @@ const RecipeGrid = () => {
     }
   };
 
-  const handleFilterChange = (newFilter: Filter) => {
-    setFilter(newFilter);
+  // Handle Page Change
+  const handlePageChange = (page: number) => {
+    dispatch(fetchRecipes({ page, limit: 10, filter }));
   };
 
-  const handlePageChange = (page: number) => {
-    dispatch(fetchRecipes({ page, limit: 10 }));
-  };
+  // Debounced API call
+  useEffect(() => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      dispatch(
+        fetchRecipes({
+          page: currentPage,
+          limit: 10,
+          rating: filter.rating,
+          preparationTime: filter.preparationTime,
+        }),
+      );
+    }, 500); // Debounce delay
+
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [dispatch, filter, currentPage]);
 
   if (loading) return <p aria-live="assertive">Loading...</p>;
   if (error) return <p aria-live="assertive">{error}</p>;
